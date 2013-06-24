@@ -58,20 +58,36 @@ public interface SliderComponent extends VisibleComponent {
     void increase();
 
     /**
-     * Moves the handle to pixel in trace. From 0 (left) to getWidth() (right). Works only with
+     * Scrolls to view and moves the handle to a pixel in trace. From 0 (left) to getWidth() (right). Works only with
      * horizontal sliders.
      * @see SliderComponent#getWidth()
      * @throws RuntimeException if the trace is not visible
+     * @throws IllegalArgumentException when the pixelInTrace is out of interval &lt;0,getWidth()&gt;.
      */
-    void moveHandleToPointInTraceHorizontally(int where);
+    void moveHandleToPointInTraceHorizontally(int pixelInTrace);
 
     /**
-     * Moves the handle to pixel in trace. From 0 (top) to getHeight() (bottom). Works only with
+     * Scrolls to view and moves the handle to a percentage of the trace's width.
+     * Possible values interval is &lt;0,1&gt;. Works only with horizontal sliders.
+     * @throws RuntimeException if the trace is not visible
+     * @throws IllegalArgumentException when the percentage is out of interval &lt;0,1&gt;.
+     */
+    void moveHandleToPointInTraceHorizontally(double percentageOfTracesWidth);
+
+    /**
+     * Scrolls to view and moves the handle to pixel in trace. From 0 (top) to getHeight() (bottom). Works only with
      * vertical sliders.
      * @see SliderComponent#getHeight()
      * @throws RuntimeException if the trace is not visible
      */
-    void moveHandleToPointInTraceVertically(int where);
+    void moveHandleToPointInTraceVertically(int pixelInTrace);
+
+    /**
+     * Scrolls to view and moves the handle to a percentage of the trace's height.
+     * Possible values interval is &lt;0,1&gt;. Works only with vertical sliders.
+     * @throws RuntimeException if the trace is not visible
+     */
+    void moveHandleToPointInTraceVertically(double percentageOfTracesHeight);
 
     /**
      * Slides the slider with the handle to left(+value) or right(-value) by value in pixels.

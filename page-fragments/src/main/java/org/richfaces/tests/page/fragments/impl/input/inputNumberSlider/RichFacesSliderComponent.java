@@ -22,8 +22,8 @@
 package org.richfaces.tests.page.fragments.impl.input.inputNumberSlider;
 
 import com.google.common.base.Preconditions;
-import org.jboss.arquillian.drone.api.annotation.Drone;
 
+import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.spi.annotations.Root;
 import org.openqa.selenium.Keys;
@@ -41,15 +41,17 @@ import org.richfaces.tests.page.fragments.impl.Utils;
 public class RichFacesSliderComponent implements SliderComponent {
 
     @Root
-    WebElement root;
-    //
+    private WebElement root;
+
+    @FindBy(className = "rf-insl-hnd-cntr")
+    private WebElement handleContainer;
     @FindBy(className = "rf-insl-hnd")
-    WebElement handle;
+    private WebElement handle;
     @FindBy(className = "rf-insl-hnd-dis")
-    WebElement disabledHandle;
+    private WebElement disabledHandle;
 
     @Drone
-    WebDriver driver;
+    private WebDriver driver;
 
     @Override
     public void decrease() {
@@ -68,7 +70,7 @@ public class RichFacesSliderComponent implements SliderComponent {
 
     @Override
     public int getHeight() {
-        return Utils.getLocations(root).getHeight();
+        return Utils.getLocations(handleContainer).getHeight();
     }
 
     @Override
@@ -83,7 +85,7 @@ public class RichFacesSliderComponent implements SliderComponent {
 
     @Override
     public int getWidth() {
-        return Utils.getLocations(root).getWidth();
+        return Utils.getLocations(handleContainer).getWidth();
     }
 
     @Override
@@ -107,23 +109,33 @@ public class RichFacesSliderComponent implements SliderComponent {
     }
 
     @Override
-    public void moveHandleToPointInTraceHorizontally(int where) {
-        Preconditions.checkArgument(where >= 0 && where <= getWidth(), "Cannot slide outside the trace");
+    public void moveHandleToPointInTraceHorizontally(int pixelInTrace) {
+        Preconditions.checkArgument(pixelInTrace >= 0 && pixelInTrace <= getWidth(), "Cannot slide outside the trace");
         if (!isVisible()) {
             throw new RuntimeException("Trace is not visible.");
         }
         scrollToView();
-        new Actions(driver).clickAndHold(handle).moveToElement(root, where, 0).release(handle).build().perform();
+        new Actions(driver).clickAndHold(handle).moveToElement(root, pixelInTrace, 0).release(handle).build().perform();
     }
 
     @Override
-    public void moveHandleToPointInTraceVertically(int where) {
-        Preconditions.checkArgument(where >= 0 && where <= getHeight(), "Cannot slide outside the trace");
+    public void moveHandleToPointInTraceHorizontally(double percentageOfTracesWidth) {
+        moveHandleToPointInTraceHorizontally((int) (percentageOfTracesWidth * getWidth()));
+    }
+
+    @Override
+    public void moveHandleToPointInTraceVertically(int pixelInTrace) {
+        Preconditions.checkArgument(pixelInTrace >= 0 && pixelInTrace <= getHeight(), "Cannot slide outside the trace");
         if (!isVisible()) {
             throw new RuntimeException("Trace is not visible.");
         }
         scrollToView();
-        new Actions(driver).clickAndHold(handle).moveToElement(root, 0, where).release(handle).build().perform();
+        new Actions(driver).clickAndHold(handle).moveToElement(root, 0, pixelInTrace).release(handle).build().perform();
+    }
+
+    @Override
+    public void moveHandleToPointInTraceVertically(double percentageOfTracesHeight) {
+        moveHandleToPointInTraceVertically((int) (percentageOfTracesHeight * getHeight()));
     }
 
     private void scrollToView() {
